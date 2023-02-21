@@ -1,0 +1,20 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.9.12, pytest-7.2.1, pluggy-1.0.0 -- /Users/bhargavi/opt/anaconda3/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/bhargavi/PycharmProjects/Assignment1
+plugins: anyio-3.6.2
+collecting ... collected 11 items
+
+test_nexrad.py::test_team_1 PASSED                                       [  9%]
+test_nexrad.py::test_team_2 PASSED                                       [ 18%]
+test_nexrad.py::test_team_3 PASSED                                       [ 27%]
+test_nexrad.py::test_team_4 PASSED                                       [ 36%]
+test_nexrad.py::test_team_5 PASSED                                       [ 45%]
+test_nexrad.py::test_team_7 PASSED                                       [ 54%]
+test_nexrad.py::test_team_8 PASSED                                       [ 63%]
+test_nexrad.py::test_team_9 PASSED                                       [ 72%]
+test_nexrad.py::test_team_10 PASSED                                      [ 81%]
+test_nexrad.py::test_team_11 PASSED                                      [ 90%]
+test_nexrad.py::test_team_12 PASSED                                      [100%]
+
+============================== 11 passed in 0.27s ==============================
