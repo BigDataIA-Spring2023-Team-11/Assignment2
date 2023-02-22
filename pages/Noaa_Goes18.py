@@ -6,18 +6,19 @@ import json
 import requests
 from streamlit_lottie import st_lottie
 
-from sql import fetch_data_from_table
-from aws_geos import get_files_from_noaa_bucket, get_noaa_geos_url, copy_s3_file, get_my_s3_url, \
-    get_dir_from_filename_geos
+from API import goes_copy_file_to_S3_and_return_my_s3_url_Api
+from utils_goes_API import get_noaa_geos_url, get_dir_from_filename_geos
+from sql import fetch_data_from_table_goes, get_files_from_noaa_bucket
+
+# from aws_geos import get_dir_from_filename_geos
 
 path = os.path.dirname(__file__)
 from dotenv import load_dotenv
+import asyncio
 
 load_dotenv()
 
-
-data_df = fetch_data_from_table()
-
+data_df = fetch_data_from_table_goes()
 
 # """
 # returns values from df of selected column
@@ -115,19 +116,28 @@ get_url_btn = st.button("Get Url")
 my_s3_file_url = ""
 # empty_selection = all(map(bool, [selected_year_geos, selected_day_geos, selected_hour_geos])) #returns a bool on checking if all fields are empty
 
+#using user inputs
 if get_url_btn:
     if ((selected_hour_geos != "Select Hour") and (selected_day_geos != "Select Day") and (selected_year_geos != "Select Year")):
-        src_bucket = "noaa-goes18"
-        des_bucket = "damg7245-ass1"
-        # copying user selected file from AWS s3 bucket to our bucket
-        copy_s3_file(src_bucket, selected_file, des_bucket, selected_file)
-        # getting url of user selected file from our s3 bucket
-        my_s3_file_url = get_my_s3_url(selected_file)
-        st.success(f"Download link has been generated!\n [URL]({my_s3_file_url})")
-        with st.expander("Expand for URL"):
-            text2 = f"<p style='font-size: 20px; text-align: center'><span style='color: #15b090; font-weight:bold ;'>{my_s3_file_url}</span></p>"
-            st.markdown(f"[{text2}]({my_s3_file_url})", unsafe_allow_html=True)
-            logging.info("URL has been generated")
+        my_s3_file_url = asyncio.run(goes_copy_file_to_S3_and_return_my_s3_url_Api(selected_file))
+        # st.markdown(my_s3_file_url)
+
+        # src_bucket = "noaa-goes18"
+        # des_bucket = "damg7245-ass1"
+        # # copying user selected file from AWS s3 bucket to our bucket
+        # copied_flag = copy_s3_file(src_bucket, selected_file, des_bucket, selected_file)
+        # # getting url of user selected file from our s3 bucket
+        # if copied_flag:
+        #     my_s3_file_url = get_my_s3_url(selected_file)
+        if my_s3_file_url['url'] != "":
+            st.success(f"Download link has been generated!\n [URL]({my_s3_file_url['url']})")
+            with st.expander("Expand for URL"):
+                text2 = f"<p style='font-size: 20px; text-align: center'><span style='color: #15b090; font-weight:bold ;'>{my_s3_file_url['url']}</span></p>"
+                st.markdown(f"[{text2}]({my_s3_file_url['url']})", unsafe_allow_html=True)
+                logging.info("URL has been generated")
+        else:
+            # logging.DEBUG("File not found in NOAA database")
+            st.error("File not found in NOAA database, Please enter a valid filename!")
     else:
         st.error("Please select all fields!")
 
@@ -139,27 +149,27 @@ st.markdown("<h2 style='text-align: center'>Download Using FileName</h2>",unsafe
 given_file_name = st.text_input("Enter File Name")
 button_url = st.button("Get url")
 
+#usign filename
 if button_url:
     if given_file_name != "":
-        src_bucket = "noaa-goes18"
-        des_bucket = "damg7245-ass1"
-        # copying user selected file from AWS s3 bucket to our bucket
         full_file_name = get_dir_from_filename_geos(given_file_name)
-        # st.markdown(f"full file name is {full_file_name}")
         if full_file_name != "":
-            copied_flag = copy_s3_file(src_bucket, full_file_name, des_bucket, full_file_name)
-            # getting url of user selected file from our s3 bucket
-            dir_to_check = f"ABI-L1b-RadC/{selected_year_geos}/{selected_day_geos}/{selected_hour_geos}"
-            if copied_flag:
-                my_s3_file_url = get_my_s3_url( full_file_name)
+            my_s3_file_url = asyncio.run(goes_copy_file_to_S3_and_return_my_s3_url_Api(full_file_name))
+            # # copying user selected file from AWS s3 bucket to our bucket
+            # copied_flag = copy_s3_file(src_bucket, full_file_name, des_bucket, full_file_name) #returns true of copied
+            # # getting url of user selected file from our s3 bucket
+            # dir_to_check = f"ABI-L1b-RadC/{selected_year_geos}/{selected_day_geos}/{selected_hour_geos}"
+            # if copied_flag:
+            #     my_s3_file_url = get_my_s3_url( full_file_name)
                 # displaying url through expander
-                st.success(f"Download link has been generated!\n [URL]({my_s3_file_url})")
+            if my_s3_file_url['url'] != "":
+                st.success(f"Download link has been generated!\n [URL]({my_s3_file_url['url']})")
                 with st.expander("Expand for URL"):
-                    text2 = f"<p style='font-size: 20px; text-align: center'><span style='color: #15b090; font-weight:bold ;'>{my_s3_file_url}</span></p>"
-                    st.markdown(f"[{text2}]({my_s3_file_url})", unsafe_allow_html=True)
+                    text2 = f"<p style='font-size: 20px; text-align: center'><span style='color: #15b090; font-weight:bold ;'>{my_s3_file_url['url']}</span></p>"
+                    st.markdown(f"[{text2}]({my_s3_file_url['url']})", unsafe_allow_html=True)
                     logging.info("URL has been generated")
             else:
-                logging.DEBUG("File not found in NOAA database")
+                # logging.DEBUG("File not found in NOAA database")
                 st.error("File not found in NOAA database, Please enter a valid filename!")
 
         else:

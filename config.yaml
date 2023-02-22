@@ -1,0 +1,11 @@
+credentials:
+  usernames:
+    damg7245:
+      password: $2b$12$pzxWZAHsYAc.1fpY73t2auYbR1S2a9wVYSKK4VaNZIhaWv8KqAgJe # To be replaced with hashed password
+cookie:
+  expiry_days: 30
+  key: random_signature_key # Must be string
+  name: random_cookie_name
+preauthorized:
+  emails:
+  - bhargavi.sikhakolli31@gmail.com
