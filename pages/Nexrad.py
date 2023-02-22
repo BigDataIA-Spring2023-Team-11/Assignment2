@@ -17,7 +17,7 @@ from API import nexrad_copy_file_to_S3_and_return_my_s3_url_API
 # from aws_nexrad import get_files_from_nexrad_bucket, get_noaa_nexrad_url, copy_s3_nexrad_file, get_my_s3_url_nex, \
 #     get_dir_from_filename_nexrad, copy_file_to_S3_and_return_my_s3_url
 # from aws_nexrad import get_dir_from_filename_nexrad, get_files_from_nexrad_bucket, get_noaa_nexrad_url
-from nex_sql import fetch_data_from_table_nexrad, get_files_from_nexrad_bucket
+from sql_nexrad import fetch_data_from_table_nexrad, get_files_from_nexrad_bucket
 # from aws_geos import get_files_from_noaa_bucket, get_noaa_geos_url, copy_s3_file, get_my_s3_url, \
 #     get_dir_from_filename_geos
 from streamlit_folium import folium_static

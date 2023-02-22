@@ -8,7 +8,7 @@ import streamlit as st
 from dotenv import load_dotenv
 import re
 from pages.Noaa_Goes18 import data_df
-from sql import fetch_data_from_table_goes
+from sql_goes import fetch_data_from_table_goes
 
 load_dotenv() # to load environments from .env file
 

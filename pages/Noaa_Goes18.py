@@ -8,7 +8,7 @@ from streamlit_lottie import st_lottie
 
 from API import goes_copy_file_to_S3_and_return_my_s3_url_Api
 from utils_goes_API import get_noaa_geos_url, get_dir_from_filename_geos
-from sql import fetch_data_from_table_goes, get_files_from_noaa_bucket
+from sql_goes import fetch_data_from_table_goes, get_files_from_noaa_bucket
 
 # from aws_geos import get_dir_from_filename_geos
 

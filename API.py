@@ -16,8 +16,8 @@ load_dotenv()
 app = FastAPI()
 
 #custom imports
-from sql import fetch_data_from_table_goes
-from nex_sql import  fetch_data_from_table_nexrad
+from sql_goes import fetch_data_from_table_goes
+from sql_nexrad import  fetch_data_from_table_nexrad
 
 
 data_df_goes = fetch_data_from_table_goes()
