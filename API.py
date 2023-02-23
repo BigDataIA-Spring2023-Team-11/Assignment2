@@ -88,7 +88,7 @@ def copy_s3_file_if_exists(src_bucket_name, src_file_name, dst_bucket_name, dst_
     )
     print(os.environ.get('AWS_ACCESS_KEY'), "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 
-    s3 = session.resource('s3')
+    s3 = session.resource('s3', region_name = 'us-east-1')
     src_bucket = s3.Bucket(src_bucket_name)
 
     copy_source = {
@@ -125,7 +125,7 @@ def copy_s3_file(src_bucket_name, src_file_name, dst_bucket_name, dst_file_name)
     )
     flag = 0
 
-    s3 = session.resource('s3')
+    s3 = session.resource('s3', region_name = 'us-east-1')
     src_bucket = s3.Bucket(src_bucket_name)
 
     try:
