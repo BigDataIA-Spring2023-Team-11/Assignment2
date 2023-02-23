@@ -1,4 +1,6 @@
 #system imports
+import sqlite3
+
 from fastapi import FastAPI, HTTPException
 import uvicorn
 from pydantic import BaseModel
@@ -9,6 +11,7 @@ import os
 import botocore
 import logging
 
+from sql_credentials import verify_password
 from utils_goes_API import goes_get_my_s3_url
 from utils_nexrad_API import nexrad_get_my_s3_url
 
@@ -258,4 +261,22 @@ async def return_nexrad_files_list(dir_to_check_nexrad:NexradInputs):
     noaa_files_list = get_files_from_nexrad_bucket(dir_to_check_nexrad)
 
     return {'files':noaa_files_list}
+
+
+class CredInputs(BaseModel):
+    un:str
+    pwd:str
+@app.post("/autheticate_user")
+def verify_user(credentials:CredInputs):
+    conn = sqlite3.connect('meta.db')
+    c = conn.cursor()
+
+    query = f"SELECT password FROM cred  WHERE username = '{credentials.un}'"
+
+    p=c.execute(query)
+    db_pwd = p.fetchall()[0][0]
+    return {"matched":verify_password(db_pwd, credentials.pwd)}
+
+
+
 
