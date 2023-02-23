@@ -38,10 +38,10 @@ load_dotenv() # to load environments from .env file
 # database_file_path  = os.path.join(os.path.dirname(__file__),database_file_name)
 # # ddl_file_path  = os.path.join(os.path.dirname(__file__),ddl_file_name)
 #
-years = []
-months = []
-days = []
-station = set()
+# years = []
+# months = []
+# days = []
+# station = set()
 #
 # prefix = ""
 # result = aws_client.list_objects(Bucket=bucket, Prefix=prefix, Delimiter="/")
@@ -85,29 +85,35 @@ station = set()
 # conn.commit()
 # conn.close()
 #
-prefix = "2022"
-result = aws_client.list_objects(Bucket=bucket, Prefix=prefix, Delimiter="/")
-for o in result.get("CommonPrefixes"):
-    years.append(o.get("Prefix"))
+prefixes = ["2022", "2023"]
+years = []
+months = []
+days = []
+station = set()
 
-for year in years:
-    prefix = year
+for prefix in prefixes:
     result = aws_client.list_objects(Bucket=bucket, Prefix=prefix, Delimiter="/")
     for o in result.get("CommonPrefixes"):
-        months.append(o.get("Prefix"))
+        years.append(o.get("Prefix"))
 
-for month in months:
-    prefix = month
-    result = aws_client.list_objects(Bucket=bucket, Prefix=prefix, Delimiter="/")
-    for o in result.get("CommonPrefixes"):
-        days.append(o.get("Prefix"))
+    for year in years:
+        prefix = year
+        result = aws_client.list_objects(Bucket=bucket, Prefix=prefix, Delimiter="/")
+        for o in result.get("CommonPrefixes"):
+            months.append(o.get("Prefix"))
 
-for day in days:
-    prefix = day
-    result = aws_client.list_objects(Bucket=bucket, Prefix=prefix, Delimiter="/")
-    for o in result.get("CommonPrefix",[]):
-            meta_data = prefix.split("/")
-            station.add((meta_data[0], meta_data[1], meta_data[2], meta_data[3]))
+    for month in months:
+        prefix = month
+        result = aws_client.list_objects(Bucket=bucket, Prefix=prefix, Delimiter="/")
+        for o in result.get("CommonPrefixes"):
+            days.append(o.get("Prefix"))
+
+    for day in days:
+        prefix = day
+        result = aws_client.list_objects(Bucket=bucket, Prefix=prefix, Delimiter="/")
+        for o in result.get("CommonPrefixes"):
+                meta_data = o.get("Prefix").split("/")
+                station.add((meta_data[0], meta_data[1], meta_data[2], meta_data[3]))
 
 conn = sqlite3.connect("meta.db")
 cursor = conn.cursor()
@@ -118,12 +124,12 @@ cursor.execute(
 )
 
 for data in station:
-    year, month, day, station_name = data
+    year, month, day, station = data
 
     # Check if the data already exists in the table
     cursor.execute(
         "SELECT * FROM nexrad WHERE year = ? AND month = ? AND day = ? AND station = ?",
-        (year, month, day, station_name),
+        (year, month, day, station),
     )
 
     existing_data = cursor.fetchone()
@@ -132,13 +138,13 @@ for data in station:
         # Update the existing row with the new data
         cursor.execute(
             "UPDATE nexrad SET year = ?, month = ?, day = ?, station = ? WHERE year = ? AND month = ? AND day = ? AND station = ?",
-            (year, month, day, station_name, year, month, day, station_name),
+            (year, month, day, station, year, month, day, station),
         )
     else:
         # Insert a new row with the data
         cursor.execute(
             "INSERT INTO nexrad VALUES (?, ?, ?, ?)",
-            (year, month, day, station_name),
+            (year, month, day, station),
         )
         
 conn.commit()
