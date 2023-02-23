@@ -30,6 +30,49 @@ data_df_nexrad = fetch_data_from_table_nexrad()
 
 
 
+"""
+Arguments : Directory of the bucket
+returns : list of all files from the dir
+"""
+def get_files_from_noaa_bucket(dir):
+    files_from_bucket = []
+    s3_client = boto3.client("s3",region_name="us-east-1",
+                      aws_access_key_id=os.environ.get('AWS_ACCESS_KEY'),
+                      aws_secret_access_key=os.environ.get('AWS_SECRET_KEY'))
+    paginator = s3_client.get_paginator('list_objects_v2')
+    noaa_bucket = paginator.paginate(Bucket = "noaa-goes18",Prefix = dir) #,PaginationConfig  = {"PageSize":2}
+    for count,page in enumerate(noaa_bucket):
+        files = page.get("Contents")
+        for file in files:
+            files_from_bucket.append(file['Key'])
+            # print(file['Key'])
+            # f = open("output.txt", "a")
+            # print(f"{file['Key']}",file = f)
+    # print(files_from_bucket)
+    return  files_from_bucket
+
+
+def get_files_from_nexrad_bucket(dir):
+    files_from_nexrad_bucket = []
+    s3_client = boto3.client("s3",region_name="us-east-1",
+                      aws_access_key_id=os.environ.get('AWS_ACCESS_KEY'),
+                      aws_secret_access_key=os.environ.get('AWS_SECRET_KEY'))
+    paginator = s3_client.get_paginator('list_objects_v2')
+    nexrad_bucket = paginator.paginate(Bucket = "noaa-nexrad-level2",Prefix = dir) #,PaginationConfig  = {"PageSize":2}
+    for count,page in enumerate(nexrad_bucket):
+        files = page.get("Contents")
+        for file in files:
+            files_from_nexrad_bucket.append(file['Key'])
+            # print(file['Key'])
+            # f = open("output1.txt", "a")?\
+            # print(f"{file['Key']}",file = f)
+    # print(files_from_nexrad_bucket)
+    logging.info("Files extracted from Nexrad bucket")
+    return  files_from_nexrad_bucket
+
+
+
+
 
 def copy_s3_file_if_exists(src_bucket_name, src_file_name, dst_bucket_name, dst_file_name):
     # session = boto3.Session(
@@ -70,6 +113,8 @@ def copy_s3_file_if_exists(src_bucket_name, src_file_name, dst_bucket_name, dst_
             flag = 0
     return flag
 
+
+
 def copy_s3_file(src_bucket_name, src_file_name, dst_bucket_name, dst_file_name):
     session = boto3.Session(
         aws_access_key_id=os.environ.get('AWS_ACCESS_KEY'),
@@ -97,20 +142,20 @@ def copy_s3_file(src_bucket_name, src_file_name, dst_bucket_name, dst_file_name)
 
 
 
+class GoesUserInput(BaseModel):
+    filename_with_dir:str
+#
 
 # selected_file is a full filename with dir structure
 @app.post("/get_goes_url")
-async def goes_copy_file_to_S3_and_return_my_s3_url_Api(selected_file) -> dict:
+async def goes_copy_file_to_S3_and_return_my_s3_url_Api(selected_file:GoesUserInput):
+
     my_s3_file_url = ""
     src_bucket = "noaa-goes18"
     des_bucket = "damg7245-ass1"
 
-    dir_list = str(selected_file).split("/")
-    selected_station_code = dir_list[3]
+    dir_list = str(selected_file.filename_with_dir).split("/")
 
-    print(f"{selected_file} -- file with code")
-    print(f"{selected_station_code} -- Station code")
-    print(f"{dir_list[0]} {data_df_goes.year.unique().tolist()} -- year check")
 
     if dir_list[1] not in data_df_goes.year.unique().tolist():
         raise HTTPException(status_code=400, detail="Selected Year out of range")
@@ -120,14 +165,14 @@ async def goes_copy_file_to_S3_and_return_my_s3_url_Api(selected_file) -> dict:
         raise HTTPException(status_code=400, detail="Selected Hour out of range")
     else:
         # copying user selected file from AWS s3 bucket to our bucket
-        copied_flag = copy_s3_file(src_bucket, selected_file, des_bucket, selected_file)
+        copied_flag = copy_s3_file(src_bucket, selected_file.filename_with_dir, des_bucket, selected_file.filename_with_dir)
 
     # print(f"{copied_flag} -- flag")
     # copying user selected file from AWS s3 bucket to our bucket
     # copied_flag = copy_s3_file(src_bucket, selected_file, des_bucket, selected_file)
     # getting url of user selected file from our s3 bucket
     if copied_flag:
-        my_s3_file_url = goes_get_my_s3_url(selected_file)
+        my_s3_file_url = goes_get_my_s3_url(selected_file.filename_with_dir)
     else:
         raise HTTPException(status_code=404, detail="File not found")
 
@@ -139,22 +184,18 @@ async def goes_copy_file_to_S3_and_return_my_s3_url_Api(selected_file) -> dict:
 
 
 
+class NexradUserInput(BaseModel):
+    filename_with_dir:str
+#
 
-
-@app.post("/get_nexrad_rul")
-async def nexrad_copy_file_to_S3_and_return_my_s3_url_API(selected_file) -> dict:
-    # print(selected_file)
+@app.post("/get_nexrad_url")
+async def nexrad_copy_file_to_S3_and_return_my_s3_url_API(selected_file:NexradUserInput):
 
     src_bucket = "noaa-nexrad-level2"
     des_bucket = "damg7245-ass1"
     my_s3_file_url = ""
 
-    dir_list = str(selected_file).split("/")
-    selected_station_code = dir_list[3]
-
-    print(f"{selected_file} -- file with code")
-    print(f"{selected_station_code} -- Station code")
-    print(f"{dir_list[0]} {data_df_nexrad.year.unique().tolist()} -- year check")
+    dir_list = str(selected_file.filename_with_dir).split("/")
 
     if dir_list[0] not in data_df_nexrad.year.unique().tolist():
         raise HTTPException(status_code = 400,detail="Selected Year out of range")
@@ -166,12 +207,55 @@ async def nexrad_copy_file_to_S3_and_return_my_s3_url_API(selected_file) -> dict
         raise HTTPException(status_code = 404,detail="StationCode not found")
     else:
         # copying user selected file from AWS s3 bucket to our bucket
-        copied_flag = copy_s3_file(src_bucket, selected_file, des_bucket, selected_file)
+        copied_flag = copy_s3_file(src_bucket, selected_file.filename_with_dir, des_bucket, selected_file.filename_with_dir)
 
     print(f"{copied_flag} -- flag")
     # getting url of user selected file from our s3 bucket
     if copied_flag:
-        my_s3_file_url = nexrad_get_my_s3_url(selected_file)
+        my_s3_file_url = nexrad_get_my_s3_url(selected_file.filename_with_dir)
     else:
         raise HTTPException(status_code=404, detail="File not found")
     return  {'url':my_s3_file_url}
+
+
+
+
+class GoesInputs(BaseModel):
+    year:int
+    day:str
+    hour:str
+"""
+takes geos dir (only directory structure) as input and returns all the files in that dir as list
+"""
+@app.post("/get_goes_files")
+async def return_goes_files_list(dir_to_check_geos:GoesInputs):
+    goes_files_list = []
+    dir = f"ABI-L1b-RadC/{dir_to_check_geos.year}/{dir_to_check_geos.day}/{dir_to_check_geos.hour}"
+
+    goes_files_list = get_files_from_noaa_bucket(dir)
+
+    return {'files':goes_files_list}
+
+
+
+
+
+
+
+class NexradInputs(BaseModel):
+    year:int
+    month:str
+    day:str
+    station_code:str
+"""
+takes nexrad dir as input and returns all the files in that dir as list 
+"""
+@app.post("/get_nexrad_files")
+async def return_nexrad_files_list(dir_to_check_nexrad:NexradInputs):
+    noaa_files_list = []
+    dir_to_check_nexrad = f"{dir_to_check_nexrad.year}/{dir_to_check_nexrad.month}/{dir_to_check_nexrad.day}/{dir_to_check_nexrad.station_code}"
+
+    noaa_files_list = get_files_from_nexrad_bucket(dir_to_check_nexrad)
+
+    return {'files':noaa_files_list}
+

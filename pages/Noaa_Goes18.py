@@ -7,7 +7,8 @@ import requests
 from streamlit_lottie import st_lottie
 
 from API import goes_copy_file_to_S3_and_return_my_s3_url_Api
-from utils_goes_API import get_noaa_geos_url, get_dir_from_filename_geos
+from utils_goes_API import get_noaa_geos_url, get_dir_from_filename_geos, \
+    goes_copy_file_to_S3_and_return_my_s3_url
 from sql_goes import fetch_data_from_table_goes, get_files_from_noaa_bucket
 
 # from aws_geos import get_dir_from_filename_geos
@@ -83,8 +84,13 @@ with hour:
     hour = st.selectbox("Hour",hsdl)
     selected_hour_geos = hour
 
+
+
+
+
+
     # """
-    # takes geos dir as input and returns al the files in that dir as list
+    # takes geos dir as input and returns all the files in that dir as list
     # """
 def return_list(dir_to_check_geos):
     noaa_files_list = []
@@ -93,33 +99,71 @@ def return_list(dir_to_check_geos):
 
     return noaa_files_list
 
+
+
+
+
 #creating dir based on user input
 dir_to_check_geos = ""
+selected_file = ""
+
 if (selected_hour_geos != "Select Hour") and (selected_day_geos != "Select Day") and (selected_year_geos != "Select Year"):
     dir_to_check_geos = f"ABI-L1b-RadC/{selected_year_geos}/{selected_day_geos}/{selected_hour_geos}"
+    # Takes list of files from user selected directory and showing them in selectbox
+    # noaa_files_list = return_list(dir_to_check_geos) if dir_to_check_geos != "" else []
+
+    url = 'http://127.0.0.1:8091/get_goes_files'
+    data = {
+        "year": int(selected_year_geos),
+        "day": selected_day_geos,
+        "hour": selected_hour_geos
+    }
+    response = requests.post(url=url, json=data)
+    files_list = response.json().get('files')
+
+    # response = requests.post(url, data = dir_to_check_geos)
+    # files_from_api = response.json()
+    # st.markdown(files_from_api['files'])
+    selected_file = st.selectbox("Select a file", files_list)
+else:
+    st.error("Please select all fields")
+
+
 # st.markdown(dir_to_check_geos)
 
 
 fetching, image = st.columns([3, 1])
 
-#     not_empty_selection = all(map(bool, [selected_year_geos, selected_day_geos, selected_hour_geos])) #returns a bool on checking if all fields are empty
-
-#Takes list of files from user selected directory and showing them in selectbox
-noaa_files_list = return_list(dir_to_check_geos) if dir_to_check_geos != "" else []
-selected_file = st.selectbox("Select a file", noaa_files_list)
 
 
 
-#retrieving url from AWS s3 bucket for selected file
-geos_file_url = get_noaa_geos_url(f"{dir_to_check_geos}/{selected_file}")
+
+# #retrieving url from AWS s3 bucket for selected file
+# geos_file_url = get_noaa_geos_url(f"{dir_to_check_geos}/{selected_file}")
+
+
 get_url_btn = st.button("Get Url")
 my_s3_file_url = ""
-# empty_selection = all(map(bool, [selected_year_geos, selected_day_geos, selected_hour_geos])) #returns a bool on checking if all fields are empty
+
+
+
+
+
+
 
 #using user inputs
 if get_url_btn:
     if ((selected_hour_geos != "Select Hour") and (selected_day_geos != "Select Day") and (selected_year_geos != "Select Year")):
-        my_s3_file_url = asyncio.run(goes_copy_file_to_S3_and_return_my_s3_url_Api(selected_file))
+        get_goes_url = 'http://localhost:8091/get_goes_url'
+        goes_data = {
+            "filename_with_dir":selected_file
+        }
+        response = requests.post(url=get_goes_url, json=goes_data)
+        my_s3_file_url = response.json().get('url')
+
+        # my_s3_file_url = asyncio.run(goes_copy_file_to_S3_and_return_my_s3_url_Api(selected_file))  #-----for API--------
+        # my_s3_file_url = goes_copy_file_to_S3_and_return_my_s3_url(selected_file)
+
         # st.markdown(my_s3_file_url)
 
         # src_bucket = "noaa-goes18"
@@ -129,11 +173,11 @@ if get_url_btn:
         # # getting url of user selected file from our s3 bucket
         # if copied_flag:
         #     my_s3_file_url = get_my_s3_url(selected_file)
-        if my_s3_file_url['url'] != "":
-            st.success(f"Download link has been generated!\n [URL]({my_s3_file_url['url']})")
+        if my_s3_file_url != "":
+            st.success(f"Download link has been generated!\n [URL]({my_s3_file_url})")
             with st.expander("Expand for URL"):
-                text2 = f"<p style='font-size: 20px; text-align: center'><span style='color: #15b090; font-weight:bold ;'>{my_s3_file_url['url']}</span></p>"
-                st.markdown(f"[{text2}]({my_s3_file_url['url']})", unsafe_allow_html=True)
+                text2 = f"<p style='font-size: 20px; text-align: center'><span style='color: #15b090; font-weight:bold ;'>{my_s3_file_url}</span></p>"
+                st.markdown(f"[{text2}]({my_s3_file_url})", unsafe_allow_html=True)
                 logging.info("URL has been generated")
         else:
             # logging.DEBUG("File not found in NOAA database")
@@ -154,7 +198,14 @@ if button_url:
     if given_file_name != "":
         full_file_name = get_dir_from_filename_geos(given_file_name)
         if full_file_name != "":
-            my_s3_file_url = asyncio.run(goes_copy_file_to_S3_and_return_my_s3_url_Api(full_file_name))
+            get_goes_url = 'http://127.0.0.1:8091/get_goes_url'
+            data = {
+                "filename_with_dir": full_file_name
+            }
+            response = requests.post(url=get_goes_url, json=data)
+            my_s3_file_url = response.json().get('url')
+            # my_s3_file_url = asyncio.run(goes_copy_file_to_S3_and_return_my_s3_url_Api(full_file_name))  #--------for API-------
+            # my_s3_file_url = goes_copy_file_to_S3_and_return_my_s3_url(selected_file)
             # # copying user selected file from AWS s3 bucket to our bucket
             # copied_flag = copy_s3_file(src_bucket, full_file_name, des_bucket, full_file_name) #returns true of copied
             # # getting url of user selected file from our s3 bucket
@@ -162,11 +213,11 @@ if button_url:
             # if copied_flag:
             #     my_s3_file_url = get_my_s3_url( full_file_name)
                 # displaying url through expander
-            if my_s3_file_url['url'] != "":
-                st.success(f"Download link has been generated!\n [URL]({my_s3_file_url['url']})")
+            if my_s3_file_url != "":
+                st.success(f"Download link has been generated!\n [URL]({my_s3_file_url})")
                 with st.expander("Expand for URL"):
-                    text2 = f"<p style='font-size: 20px; text-align: center'><span style='color: #15b090; font-weight:bold ;'>{my_s3_file_url['url']}</span></p>"
-                    st.markdown(f"[{text2}]({my_s3_file_url['url']})", unsafe_allow_html=True)
+                    text2 = f"<p style='font-size: 20px; text-align: center'><span style='color: #15b090; font-weight:bold ;'>{my_s3_file_url}</span></p>"
+                    st.markdown(f"[{text2}]({my_s3_file_url})", unsafe_allow_html=True)
                     logging.info("URL has been generated")
             else:
                 # logging.DEBUG("File not found in NOAA database")
