@@ -1,10 +1,7 @@
-import asyncio
-
 import pandas as pd
 import os
 import json
 import requests
-from fastapi import FastAPI
 import uvicorn
 
 
@@ -17,13 +14,12 @@ from API import nexrad_copy_file_to_S3_and_return_my_s3_url_API
 # from aws_nexrad import get_files_from_nexrad_bucket, get_noaa_nexrad_url, copy_s3_nexrad_file, get_my_s3_url_nex, \
 #     get_dir_from_filename_nexrad, copy_file_to_S3_and_return_my_s3_url
 # from aws_nexrad import get_dir_from_filename_nexrad, get_files_from_nexrad_bucket, get_noaa_nexrad_url
-from sql_nexrad import fetch_data_from_table_nexrad, get_files_from_nexrad_bucket
+from sql_nexrad import fetch_data_from_table_nexrad
 # from aws_geos import get_files_from_noaa_bucket, get_noaa_geos_url, copy_s3_file, get_my_s3_url, \
 #     get_dir_from_filename_geos
 from streamlit_folium import folium_static
 
-from utils_nexrad_API import get_noaa_nexrad_url, get_dir_from_filename_nexrad, \
-    nexrad_copy_file_to_S3_and_return_my_s3_url
+from utils_nexrad_API import get_dir_from_filename_nexrad
 
 path = os.path.dirname(__file__)
 from dotenv import load_dotenv
@@ -118,17 +114,17 @@ with station_code:
 
 
 
-
-# """
-# takes nexrad dir as input and returns al the files in that dir as list
-# """
-def return_list(dir_to_check_nexrad):
-    noaa_files_list = []
-
-    noaa_files_list = get_files_from_nexrad_bucket(dir_to_check_nexrad)
-
-    return noaa_files_list
-
+#
+# # """
+# # takes nexrad dir as input and returns al the files in that dir as list
+# # """
+# def return_list(dir_to_check_nexrad):
+#     noaa_files_list = []
+#
+#     noaa_files_list = get_files_from_nexrad_bucket(dir_to_check_nexrad)
+#
+#     return noaa_files_list
+#
 
 
 # if st.button("Retreive"):
@@ -228,7 +224,7 @@ if button_url:
         }
         response = requests.post(url=get_nexrad_url, json=nexrad_data)
         my_s3_file_url = response.json().get('url')
-        st.markdown(my_s3_file_url)
+        # st.markdown(my_s3_file_url)
 
         if my_s3_file_url != None:  #checks if the file url is not empty
             st.success(f"Download link has been generated!\n [URL]({my_s3_file_url})")

@@ -7,7 +7,7 @@ import requests
 from streamlit_lottie import st_lottie
 
 from API import goes_copy_file_to_S3_and_return_my_s3_url_Api
-from utils_goes_API import get_noaa_geos_url, get_dir_from_filename_geos, \
+from utils_goes_API import get_dir_from_filename_geos, \
     goes_copy_file_to_S3_and_return_my_s3_url
 from sql_goes import fetch_data_from_table_goes, get_files_from_noaa_bucket
 
@@ -87,19 +87,19 @@ with hour:
 
 
 
-
-
-    # """
-    # takes geos dir as input and returns all the files in that dir as list
-    # """
-def return_list(dir_to_check_geos):
-    noaa_files_list = []
-
-    noaa_files_list = get_files_from_noaa_bucket(dir_to_check_geos)
-
-    return noaa_files_list
-
-
+#
+#
+#     # """
+#     # takes geos dir as input and returns all the files in that dir as list
+#     # """
+# def return_list(dir_to_check_geos):
+#     noaa_files_list = []
+#
+#     noaa_files_list = get_files_from_noaa_bucket(dir_to_check_geos)
+#
+#     return noaa_files_list
+#
+#
 
 
 
