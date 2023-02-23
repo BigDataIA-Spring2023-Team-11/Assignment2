@@ -1,4 +1,4 @@
-# Assignment 1 - Exploration of GOES and NEXRAD Datasets
+# Assignment 2 - Exploration of GOES and NEXRAD Datasets
 
 User Guide - <a href="https://codelabs-preview.appspot.com/?file_id=1NZhfr8-otPaV6pyxBA2UvcESKmiMBFuhEO0d2omQReI#9">Assignment 1 - User Guide</a>
 
@@ -47,9 +47,9 @@ Following are the stacks used to build this project
 
 <h3> Contribution </h3>
 
-1. Aakash : 25%
-2. Bhakti : 25%
-3. Bhargavi : 25%
-4. Charu : 25%
+1. Aakash : 
+2. Bhakti : 
+3. Bhargavi : 40%
+4. Charu : 
 
 WE ATTEST THAT WE HAVEN’T USED ANY OTHER STUDENTS’ WORK IN OUR ASSIGNMENT AND ABIDE BY THE POLICIES LISTED IN THE STUDENT HANDBOOK
