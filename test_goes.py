@@ -1,4 +1,5 @@
-from aws_geos import get_noaa_geos_url,get_dir_from_filename_geos
+from utils_goes_API import get_dir_from_filename_geos, get_noaa_geos_url
+
 team1 = "OR_ABI-L2-ACMM1-M6_G18_s20230090504262_e20230090504319_c20230090505026.nc"
 team2 = "OR_ABI-L2-ACTPM1-M6_G18_s20230090408262_e20230090408319_c20230090409174.nc"
 team3 = "OR_ABI-L2-DSIM1-M6_G18_s20230110608251_e20230110608308_c20230110609126.nc"

@@ -1,4 +1,4 @@
-from aws_nexrad import get_dir_from_filename_nexrad, get_noaa_nexrad_url
+from utils_nexrad_API import get_dir_from_filename_nexrad, get_noaa_nexrad_url
 
 team1 = "KBGM20110612_003045_V03.gz"
 team2 = "KARX20100512_014240_V03.gz"
