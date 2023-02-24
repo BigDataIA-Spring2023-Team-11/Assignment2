@@ -3,7 +3,6 @@ import logging
 import sqlite3
 import pandas as pd
 from pathlib import Path
-from aws_nexrad import get_meta_data_for_db_population
 
 LOGLEVEL  =  os.environ.get('LOGLEVEL','INFO').upper()
 

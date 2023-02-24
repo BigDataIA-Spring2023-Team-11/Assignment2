@@ -1,10 +1,7 @@
 #system imports
 import sqlite3
-from datetime import datetime
 
 from fastapi import FastAPI, HTTPException
-import uvicorn
-import jwt
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import streamlit as st
@@ -12,28 +9,84 @@ import boto3
 import os
 import botocore
 import logging
+import pandas as pd
+# from sql_credentials import verify_password
+import hashlib
 
-from sql_credentials import verify_password
-from utils_goes_API import goes_get_my_s3_url
-from utils_nexrad_API import nexrad_get_my_s3_url
+# from utils_goes_API import goes_get_my_s3_url
+# from utils_nexrad_API import nexrad_get_my_s3_url
 
 load_dotenv()
 app = FastAPI()
+#
+# #custom imports
+# from sql_goes import fetch_data_from_table_goes
+# from sql_nexrad import  fetch_data_from_table_nexrad
 
-#custom imports
-from sql_goes import fetch_data_from_table_goes
-from sql_nexrad import  fetch_data_from_table_nexrad
 
+
+database_file_name = "meta.db"
+database_file_path  = os.path.join(os.path.dirname(__file__),database_file_name)
+
+def hash_text(text):
+    # Convert the text to bytes using UTF-8 encoding
+    text_bytes = text.encode('utf-8')
+
+    # Create a SHA-256 hash object
+    sha256_hash = hashlib.sha256()
+
+    # Update the hash object with the text bytes
+    sha256_hash.update(text_bytes)
+
+    # Get the hexadecimal representation of the hash
+    hex_digest = sha256_hash.hexdigest()
+
+    # Return the hexadecimal hash digest
+    return hex_digest
+
+def verify_password(db_password,given_password):
+    flag = 0
+    if str(hash_text(given_password)) == str(db_password):
+        flag = 1
+    return flag
+
+# secret_key = "bullshit"
+def goes_get_my_s3_url(filename):
+    # print(dir_to_geos)
+    print(filename)
+    static_url = "https://damg7245-ass1.s3.amazonaws.com"
+    filename_alone = filename.split("/")[-1]
+    generated_url = f"{static_url}/{filename}"
+    return generated_url
+
+
+"""
+return concatenated url of our s3 bucket
+"""
+def nexrad_get_my_s3_url(filename):
+    static_url = "https://damg7245-ass1.s3.amazonaws.com"
+    filename_alone = filename.split("/")[-1]
+    generated_url = f"{static_url}/{filename}"
+    return generated_url
+
+
+
+
+@st.cache
+def fetch_data_from_table_nexrad():
+    conn = sqlite3.connect(database_file_path)
+    df = pd.read_sql('SELECT * FROM nexrad', conn)
+    logging.info("Data Loaded")
+    return df
+#
+@st.cache
+def fetch_data_from_table_goes():
+    conn = sqlite3.connect(database_file_path)
+    df = pd.read_sql('SELECT * FROM goes_meta', conn)
+    return df
 
 data_df_goes = fetch_data_from_table_goes()
 data_df_nexrad = fetch_data_from_table_nexrad()
-
-
-
-# secret_key = "bullshit"
-
-
-
 
 """
 Arguments : Directory of the bucket

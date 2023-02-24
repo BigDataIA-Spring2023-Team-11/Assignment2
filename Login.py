@@ -50,7 +50,7 @@ valid_user_flag = False
 
 def validate_user_credentials(username, password):
 
-    url = 'http://127.0.0.1:8091/autheticate_user'
+    url = 'http://localhost:8000/autheticate_user'
     data = {
         "un": username,
         "pwd": password
@@ -149,9 +149,9 @@ def logout_btn_actions():
     c1, c2, c3, c4, c5 = st.columns(5)
 
     with c5:
-        logout_btn = st.button("Logout!")
+        logout_btn1 = st.button("Logout")
 
-    if logout_btn:
+    if logout_btn1:
         st.session_state.authenticated = False
         placeholder_logout.empty()
         # st.success("User Logged-OUT")
