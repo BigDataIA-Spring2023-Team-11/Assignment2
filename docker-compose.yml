@@ -9,6 +9,7 @@ services:
     command: "streamlit run --server.port 8091 --server.enableCORS false Login.py"
     ports:
       - "8091:8091"
+    hostname: app
   api:
     env_file:
       - .env
@@ -18,4 +19,5 @@ services:
     command: "uvicorn API:app --host 0.0.0.0 --port 8000 --reload"
     ports:
       - "8000:8000"
+    hostname: api
 

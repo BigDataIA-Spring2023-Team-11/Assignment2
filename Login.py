@@ -50,7 +50,7 @@ valid_user_flag = False
 
 def validate_user_credentials(username, password):
 
-    url = 'http://localhost:8000/autheticate_user'
+    url = 'http://api:8000/autheticate_user'
     data = {
         "un": username,
         "pwd": password

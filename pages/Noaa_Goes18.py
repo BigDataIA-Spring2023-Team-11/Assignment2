@@ -139,7 +139,7 @@ def goes_enabled():
         # Takes list of files from user selected directory and showing them in selectbox
         # noaa_files_list = return_list(dir_to_check_geos) if dir_to_check_geos != "" else []
 
-        url = 'http://127.0.0.1:8000/get_goes_files'
+        url = 'http://api:8000/get_goes_files'
         data = {
             "year": int(selected_year_geos),
             "day": selected_day_geos,
@@ -181,7 +181,7 @@ def goes_enabled():
     #using user inputs
     if get_url_btn:
         if ((selected_hour_geos != "Select Hour") and (selected_day_geos != "Select Day") and (selected_year_geos != "Select Year")):
-            get_goes_url = 'http://localhost:8000/get_goes_url'
+            get_goes_url = 'http://api:8000/get_goes_url'
             goes_data = {
                 "filename_with_dir":selected_file
             }
@@ -225,7 +225,7 @@ def goes_enabled():
         if given_file_name != "":
             full_file_name = get_dir_from_filename_geos(given_file_name)
             if full_file_name != "":
-                get_goes_url = 'http://127.0.0.1:8000/get_goes_url'
+                get_goes_url = 'http://api:8000/get_goes_url'
                 data = {
                     "filename_with_dir": full_file_name
                 }
