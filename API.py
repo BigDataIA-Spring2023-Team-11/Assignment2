@@ -1,8 +1,10 @@
 #system imports
 import sqlite3
+from datetime import datetime
 
 from fastapi import FastAPI, HTTPException
 import uvicorn
+import jwt
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import streamlit as st
@@ -28,7 +30,7 @@ data_df_nexrad = fetch_data_from_table_nexrad()
 
 
 
-
+# secret_key = "bullshit"
 
 
 
@@ -88,7 +90,7 @@ def copy_s3_file_if_exists(src_bucket_name, src_file_name, dst_bucket_name, dst_
     )
     print(os.environ.get('AWS_ACCESS_KEY'), "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 
-    s3 = session.resource('s3', region_name = 'us-east-1')
+    s3 = session.resource('s3')
     src_bucket = s3.Bucket(src_bucket_name)
 
     copy_source = {
@@ -125,7 +127,7 @@ def copy_s3_file(src_bucket_name, src_file_name, dst_bucket_name, dst_file_name)
     )
     flag = 0
 
-    s3 = session.resource('s3', region_name = 'us-east-1')
+    s3 = session.resource('s3')
     src_bucket = s3.Bucket(src_bucket_name)
 
     try:
@@ -272,11 +274,32 @@ def verify_user(credentials:CredInputs):
     c = conn.cursor()
 
     query = f"SELECT password FROM cred  WHERE username = '{credentials.un}'"
+    # try:
+    #     p = c.execute(query)
+    #     db_pwd = p.fetchall()[0][0]
+    #     if verify_password(db_pwd, credentials.pwd):
+    #         user_data = {"username": credentials.un}
+    #         expiration_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+    #         token = jwt.encode({"user": user_data, "exp": expiration_time}, secret_key, algorithm="HS256")
+    #         return {"token": token}
+    #     else:
+    #         return {"error": "Invalid credentials"}
+    # except IndexError:
+    #     return {"error": "Invalid credentials"}
+    try:
+        p=c.execute(query)
+        db_pwd = p.fetchall()[0][0]
+        return {"matched":verify_password(db_pwd, credentials.pwd)}
+    except IndexError:
+        return {"matched": 0}
 
-    p=c.execute(query)
-    db_pwd = p.fetchall()[0][0]
-    return {"matched":verify_password(db_pwd, credentials.pwd)}
-
-
-
+# @app.get("/protected_resource")
+# def protected_resource(token: str):
+#     if is_token_valid(token):
+#         # Grant access to the protected resource
+#         return {"message": "Access granted"}
+#     else:
+#         # Return an error message or redirect to the login page
+#         return {"error": "Invalid or expired token"}
+#
 
