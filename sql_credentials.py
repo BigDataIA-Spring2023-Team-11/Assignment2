@@ -50,7 +50,7 @@ def hash_text(text):
 
 def add_user_to_table(username, password):
     # Connect to the database
-    conn = sqlite3.connect('meta.db')
+    conn = sqlite3.connect('../meta.db')
     c = conn.cursor()
     tableName = "cred"
     # Insert the new user into the table

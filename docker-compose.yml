@@ -1,0 +1,21 @@
+version: "1"
+services:
+  app:
+    env_file:
+      - .env
+    container_name: frontend
+    build:
+      dockerfile: Dockerfile
+    command: "streamlit run --server.port 8091 --server.enableCORS false Login.py"
+    ports:
+      - "8091:8091"
+  api:
+    env_file:
+      - .env
+    container_name: backend
+    build:
+      dockerfile: apification/Dockerfile
+    command: "uvicorn API:app --host 0.0.0.0 --port 8000 --reload"
+    ports:
+      - "8000:8000"
+

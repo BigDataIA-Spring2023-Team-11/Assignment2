@@ -2,15 +2,10 @@ import pandas as pd
 import os
 import json
 import requests
-import uvicorn
-
 
 import streamlit as st
-from streamlit_lottie import st_lottie
 import logging
 import folium
-from API import nexrad_copy_file_to_S3_and_return_my_s3_url_API
-from Login import home_introduction, home_page_layout
 # from aws_nexrad import get_files_from_nexrad_bucket, get_noaa_nexrad_url, copy_s3_nexrad_file, get_my_s3_url_nex, \
 #     get_dir_from_filename_nexrad, copy_file_to_S3_and_return_my_s3_url
 # from aws_nexrad import get_dir_from_filename_nexrad, get_files_from_nexrad_bucket, get_noaa_nexrad_url
@@ -164,7 +159,7 @@ def nexrad_enabled():
     if ((selected_year_nexrad != "Select Year") and (selected_month_nexrad != "Select Month") and (
             selected_day_nexrad != "Select Day") and (selected_station_nexrad != "Select station")):
 
-            url = 'http://127.0.0.1:8091/get_nexrad_files'
+            url = 'http://127.0.0.1:8000/get_nexrad_files'
             data = {
                 "year": int(selected_year_nexrad),
                 "month": selected_month_nexrad,
@@ -211,7 +206,7 @@ def nexrad_enabled():
         #     my_s3_file_url = asyncio.run(nexrad_copy_file_to_S3_and_return_my_s3_url_API(selected_file)) #------for API-----
         #     my_s3_file_url = nexrad_copy_file_to_S3_and_return_my_s3_url(selected_file)
 
-            get_nexrad_url = 'http://localhost:8091/get_nexrad_url'
+            get_nexrad_url = 'http://127.0.0.1:8000/get_nexrad_url'
             nexrad_data = {
                 "filename_with_dir": selected_file
             }
@@ -250,7 +245,7 @@ def nexrad_enabled():
             #getting my s3 bucket url giving full file name with dir as input
             # my_s3_file_url = asyncio.run(nexrad_copy_file_to_S3_and_return_my_s3_url_API(full_file_name))  #---for API-----
             # my_s3_file_url = nexrad_copy_file_to_S3_and_return_my_s3_url(full_file_name)
-            get_nexrad_url = 'http://localhost:8091/get_nexrad_url'
+            get_nexrad_url = 'http://127.0.0.1:8000/get_nexrad_url'
             nexrad_data = {
                 "filename_with_dir": full_file_name
             }
