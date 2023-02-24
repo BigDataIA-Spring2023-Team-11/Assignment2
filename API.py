@@ -137,7 +137,7 @@ def copy_s3_file_if_exists(src_bucket_name, src_file_name, dst_bucket_name, dst_
     #     aws_access_key_id=os.environ.get('AWS_ACCESS_KEY'),
     #     aws_secret_access_key=os.environ.get('AWS_SECRET_KEY')
     # )
-    session = boto3.Session(
+    session = boto3.Session(region_name="us-east-1",
         aws_access_key_id=os.environ.get('AWS_ACCESS_KEY'),
         aws_secret_access_key=os.environ.get('AWS_SECRET_KEY')
     )
@@ -174,7 +174,7 @@ def copy_s3_file_if_exists(src_bucket_name, src_file_name, dst_bucket_name, dst_
 
 
 def copy_s3_file(src_bucket_name, src_file_name, dst_bucket_name, dst_file_name):
-    session = boto3.Session(
+    session = boto3.Session(region_name="us-east-1",
         aws_access_key_id=os.environ.get('AWS_ACCESS_KEY'),
         aws_secret_access_key=os.environ.get('AWS_SECRET_KEY')
     )
