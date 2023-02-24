@@ -159,7 +159,7 @@ def nexrad_enabled():
     if ((selected_year_nexrad != "Select Year") and (selected_month_nexrad != "Select Month") and (
             selected_day_nexrad != "Select Day") and (selected_station_nexrad != "Select station")):
 
-            url = 'http://127.0.0.1:8000/get_nexrad_files'
+            url = 'http://api:8000/get_nexrad_files'
             data = {
                 "year": int(selected_year_nexrad),
                 "month": selected_month_nexrad,
@@ -206,7 +206,7 @@ def nexrad_enabled():
         #     my_s3_file_url = asyncio.run(nexrad_copy_file_to_S3_and_return_my_s3_url_API(selected_file)) #------for API-----
         #     my_s3_file_url = nexrad_copy_file_to_S3_and_return_my_s3_url(selected_file)
 
-            get_nexrad_url = 'http://127.0.0.1:8000/get_nexrad_url'
+            get_nexrad_url = 'http://api:8000/get_nexrad_url'
             nexrad_data = {
                 "filename_with_dir": selected_file
             }
@@ -245,7 +245,7 @@ def nexrad_enabled():
             #getting my s3 bucket url giving full file name with dir as input
             # my_s3_file_url = asyncio.run(nexrad_copy_file_to_S3_and_return_my_s3_url_API(full_file_name))  #---for API-----
             # my_s3_file_url = nexrad_copy_file_to_S3_and_return_my_s3_url(full_file_name)
-            get_nexrad_url = 'http://127.0.0.1:8000/get_nexrad_url'
+            get_nexrad_url = 'http://api:8000/get_nexrad_url'
             nexrad_data = {
                 "filename_with_dir": full_file_name
             }
