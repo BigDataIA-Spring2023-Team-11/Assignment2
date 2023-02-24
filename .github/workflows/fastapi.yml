@@ -24,6 +24,13 @@ jobs:
         name: Install pipenv
         run: pip install pipenv
       - 
+        name: Set AWS credentials
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        run: |
+          echo "Setting up AWS credentials"
+      -    
         name: Run tests
         working-directory: ./
         run: |
