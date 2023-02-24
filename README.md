@@ -1,26 +1,52 @@
-# Assignment 2 - Exploration of GOES and NEXRAD Datasets
+# Assignment 2 - Code Advancements to Goes-Nexrad Streamlit Application
 
 User Guide - <a href="https://codelabs-preview.appspot.com/?file_id=1NZhfr8-otPaV6pyxBA2UvcESKmiMBFuhEO0d2omQReI#9">Assignment 1 - User Guide</a>
 
-<h3> Problem Statement </h3>
-Build a data exploration tool for a Geospatial startup that leverages publically available data and allows data analysts to download it. GOES and NEXRAD satellite datasets are the main data sources available on the NOAA's (National Oceanic and Atmospheric Administration) website.
 
 <h3> Description </h3>
 
-GOES is a satellite that provides atmospheric measurements and advanced imagery that helps meteorologists observe and predict local weather like, hurricanes, severe floods, thunderstorms, fog etc, and help in monitoring volcanic eruptions and forest fires.
+In this repository, we are going to add functionality to the existing Goes-Nexrad Streamlit Application from Assignment 1.
+The following changes have been incorporated to enhance the Application reusability.
+* 1.Fast API : 
+  * Authentication : 
+   Documentation: https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/?h=jwtLinks 
+  
+  * Docker:
+   * Documentation: https://fastapi.tiangolo.com/deployment/docker/Links 
+  
+  * Great Expectation:
+   * Documentation : https://docs.greatexpectations.io/docs/deployment_patterns/how_to_use_gx_with_aws/how_to_use_gx_with_aws_using_cloud_storage_and_pandas/
+   * Documentation : https://docs.greatexpectations.io/docs/deployment_patterns/how_to_use_great_expectations_with_airflow/
+  
+  * Airflow: 
+   * Documentation: https://airflow.apache.org/docs/
 
-NEXRAD systems are weather radars that detect and produce over 100 different long-range and high-altitude weather observations and products, including areas of precipitation, winds, and thunderstorms.
+  Great Expectation hosted on s3 bucket : http://data-great-expect.s3-website-us-east-1.amazonaws.com
+
 
 <h3> Flow of Data</h3>
 
 1. NOAA's website has raw GOES and NEXRAD satellite data.
 2. This data is scraped in order to generate metadata, which is then stored in SQLite.
 3. These values pertain to metadata directories.
-4. The user has access to our Exploration Web App, where he must specify the 'Year,' 'Day,' and 'Hour'.
-5. Using these values, a unique file is fetched and a link to download the file displayed.
-8. User can also use the filename to retrive and download the file.
-9. Downloaded file is in .NC format, used to store multidimensional data.
+4. There is an Authentication page that authenticates the user.
+5. The user has access to our Exploration Web App, where he must specify the 'Year,' 'Day,' and 'Hour'.
+6. Using these values, a unique file is fetched and a link to download the file displayed.
+7. User can also use the filename to retrive and download the file.
+8. Downloaded file is in .NC format, used to store multidimensional data.
 
+
+1. Streamlit
+
+* Implementation of login page and allowing authenticated users to interact with the dashboard.[1]
+* Sending RestAPI calls to FastAPI endpoints and display the returned response.
+
+2. FastAPI
+* Endpoints as per the usecase.
+* Process of file transfer within fastapi with status of the request returned appropriatly to streamlit. Example, if the user inputs are invalid, the response return code should be “400 - Bad Request”
+
+3. Airflow
+* Create DAG’s with task’s in order of their dependency.
 <h3> Built With </h3>
 
 Following are the stacks used to build this project
@@ -29,27 +55,29 @@ Following are the stacks used to build this project
 2. SQLite3
 3. Python 3.9
 4. Streamlit 1.12
+5. FastAPI for authenticating the user
+6. Docker to containerize the entire application
+7. Great Expectation 
+8. Airflow to build workflows connecting virtually any technology
 
 <h3> Steps to run this project </h3>
 
 1. Open terminal
 2. Change to the location where you want to copy the repository
 3. Copy and paste the following command, and press enter
+```bash
+     https://github.com/BigDataIA-Spring2023-Team-11/Assignment2.git
 ```
-   git clone https://github.com/BigDataIA-Spring2023-Team-11/Assignment1.git
+4.Run the following to install the requirements file.
+```bash
+ pip install -r requirements.txt
 ```
-4. Change to the location where ‘requirements.txt' is located
-5. Copy and paste the following command, and press enter
-```
-    pip install -r /path/to/requirements.txt
-```
-
 
 <h3> Contribution </h3>
 
-1. Aakash : 
-2. Bhakti : 
-3. Bhargavi : 40%
-4. Charu : 
+1. Aakash :  23.33%  
+2. Bhakti :  23.33%
+3. Bhargavi: 30%
+4. Charu :   23.33%
 
 WE ATTEST THAT WE HAVEN’T USED ANY OTHER STUDENTS’ WORK IN OUR ASSIGNMENT AND ABIDE BY THE POLICIES LISTED IN THE STUDENT HANDBOOK
