@@ -14,18 +14,21 @@ config_version: 3.0
 # You can use the CLI command `great_expectations datasource new` to help you
 # add a new datasource. Read more at https://docs.greatexpectations.io/docs/guides/connecting_to_your_data/connect_to_data_overview
 datasources:
-  mygoes18_datasource:
+  goes18_datasource:
+    execution_engine:
+      class_name: PandasExecutionEngine
+      module_name: great_expectations.execution_engine
     class_name: Datasource
     data_connectors:
       default_inferred_data_connector_name:
         class_name: InferredAssetFilesystemDataConnector
         name: default_inferred_data_connector_name
-        base_directory: data
         module_name: great_expectations.datasource.data_connector
         default_regex:
           group_names:
             - data_asset_name
           pattern: (.*)\.csv
+        base_directory: data
       default_runtime_data_connector_name:
         class_name: RuntimeDataConnector
         assets:
@@ -36,21 +39,21 @@ datasources:
             module_name: great_expectations.datasource.data_connector.asset
         name: default_runtime_data_connector_name
         module_name: great_expectations.datasource.data_connector
+    module_name: great_expectations.datasource
+  nexrad_datasource:
     execution_engine:
       class_name: PandasExecutionEngine
       module_name: great_expectations.execution_engine
-    module_name: great_expectations.datasource
-  mynexrad_datasource:
     class_name: Datasource
     data_connectors:
       default_inferred_data_connector_name:
         class_name: InferredAssetFilesystemDataConnector
-        base_directory: data
         module_name: great_expectations.datasource.data_connector
         default_regex:
           group_names:
             - data_asset_name
           pattern: (.*)\.csv
+        base_directory: data
       default_runtime_data_connector_name:
         class_name: RuntimeDataConnector
         assets:
@@ -60,9 +63,6 @@ datasources:
               - runtime_batch_identifier_name
             module_name: great_expectations.datasource.data_connector.asset
         module_name: great_expectations.datasource.data_connector
-    execution_engine:
-      class_name: PandasExecutionEngine
-      module_name: great_expectations.execution_engine
     module_name: great_expectations.datasource
 config_variables_file_path: uncommitted/config_variables.yml
 
@@ -78,17 +78,30 @@ stores:
 # Three stores are required: expectations, validations, and
 # evaluation_parameters, and must exist with a valid store entry. Additional
 # stores can be configured for uses such as data_docs, etc.
-  expectations_store:
+#  expectations_store:
+#    class_name: ExpectationsStore
+#    store_backend:
+#      class_name: TupleFilesystemStoreBackend
+#      base_directory: expectations/
+  expectations_S3_store:
     class_name: ExpectationsStore
     store_backend:
-      class_name: TupleFilesystemStoreBackend
-      base_directory: expectations/
+      class_name: TupleS3StoreBackend
+      bucket: 'damg7245-assignment1'
+      prefix: 'great_expectations_s3'
 
-  validations_store:
+  #validations_store:
+    #class_name: ValidationsStore
+    #store_backend:
+      #class_name: TupleFilesystemStoreBackend
+      #base_directory: uncommitted/validations/
+
+  validations_S3_store:
     class_name: ValidationsStore
     store_backend:
-      class_name: TupleFilesystemStoreBackend
-      base_directory: uncommitted/validations/
+      class_name: TupleS3StoreBackend
+      bucket: 'damg7245-assignment1'
+      prefix: 'great_expectations_s3'
 
   evaluation_parameter_store:
     class_name: EvaluationParameterStore
@@ -106,8 +119,8 @@ stores:
       suppress_store_backend_id: true
       base_directory: profilers/
 
-expectations_store_name: expectations_store
-validations_store_name: validations_store
+expectations_store_name: expectations_S3_store
+validations_store_name: validations_S3_store
 evaluation_parameter_store_name: evaluation_parameter_store
 checkpoint_store_name: checkpoint_store
 
@@ -125,11 +138,20 @@ data_docs_sites:
     site_index_builder:
       class_name: DefaultSiteIndexBuilder
 
+  s3_site: # this is a user-selected name - you may select your own
+    class_name: SiteBuilder
+    store_backend:
+      class_name: TupleS3StoreBackend
+      bucket: data-great-expect  # UPDATE the bucket name here to match the bucket you configured above.
+    site_index_builder:
+      class_name: DefaultSiteIndexBuilder
+      show_cta_footer: true
+
 anonymous_usage_statistics:
-  data_context_id: abcd880f-d84a-4c5a-9c0b-e0f5de160249
+  data_context_id: 88483ccd-10f5-469b-a05c-38b82c29e152
   enabled: true
+notebooks:
 include_rendered_content:
-  expectation_suite: false
   globally: false
   expectation_validation_result: false
-notebooks:
+  expectation_suite: false

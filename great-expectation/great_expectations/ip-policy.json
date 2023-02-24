@@ -1,0 +1,22 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Sid": "Allow only based on source IP",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": [
+        "arn:aws:s3:::data-great-expect",
+        "arn:aws:s3:::data-great-expect/*"
+      ],
+      "Condition": {
+        "IpAddress": {
+          "aws:SourceIp": [
+            "0.0.0.0/0"
+
+          ]
+        }
+      }
+    }
+    ]
+  }
