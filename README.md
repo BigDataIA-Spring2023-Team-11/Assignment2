@@ -1,8 +1,10 @@
 # Assignment 2 - Code Advancements to Goes-Nexrad Streamlit Application
 
-User Guide - <a href="https://codelabs-preview.appspot.com/?file_id=1NZhfr8-otPaV6pyxBA2UvcESKmiMBFuhEO0d2omQReI#9">Assignment 1 - User Guide</a>
-*Streamlit link : http://44.212.9.212:8091
-*FastApi link : http://44.212.9.212:8000/docs
+User Guide - <a href="https://codelabs-preview.appspot.com/?file_id=1NZhfr8-otPaV6pyxBA2UvcESKmiMBFuhEO0d2omQReI#9">Assignment 2 - User Guide</a>
+* Please raise an issue if you want to check the links of Streamlit and FastApi as we will need to fire our instance up for the links to be up and running.
+* Streamlit link : http://54.152.158.238:8091/
+* FastApi link : http://54.152.158.238:8000/docs
+* Public DockerHub Container: https://hub.docker.com/repository/docker/sikakolli/data_explorer/general
 
 <h3> Description </h3>
 
@@ -73,7 +75,8 @@ Following are the stacks used to build this project
 ```bash
  pip install -r requirements.txt
 ```
-
+5. $ docker pull sikakolli/data_explorer
+6. This is command to pull our image from DockerHub. For this you will need to login to Dockerhub using your own credentials.
 <h3> Contribution </h3>
 
 1. Aakash :  23.33%  
