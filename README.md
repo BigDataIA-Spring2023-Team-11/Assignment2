@@ -63,6 +63,13 @@ Following are the stacks used to build this project
 7. Great Expectation 
 8. Airflow to build workflows connecting virtually any technology
 
+
+Architecture Diagram :
+
+<!-- <imag src="architecture_diagram.png" width="300" height="300" /> -->
+ 
+   ![image](architecture_diagram.png)
+
 <h3> Steps to run this project </h3>
 
 1. Open terminal
