@@ -66,7 +66,7 @@ Following are the stacks used to build this project
 
 Architecture Diagram :
 
-<!-- <imag src="architecture_diagram.png" width="300" height="300" /> -->
+<!-- <imag src= "https://github.com/BigDataIA-Spring2023-Team-11/Assignment2/blob/main/arch-diag/architecture_diagram.png" width="300" height="300" /> -->
  
    ![image](architecture_diagram.png)
 
