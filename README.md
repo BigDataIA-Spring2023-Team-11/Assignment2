@@ -65,11 +65,8 @@ Following are the stacks used to build this project
 
 
 Architecture Diagram :
-
-<p align=“center”>
-  <img src=“https://github.com/BigDataIA-Spring2023-Team-11/Assignment2/blob/main/arch-diag/architecture_diagram.png” width=“1000” title=“Architecture Diagram”>
-</p> 
    
+ ![image](https://github.com/BigDataIA-Spring2023-Team-11/Assignment2/blob/main/arch-diag/architecture_diagram.png)
 
 <h3> Steps to run this project </h3>
 
