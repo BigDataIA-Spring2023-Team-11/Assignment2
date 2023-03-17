@@ -83,7 +83,20 @@ Architecture Diagram :
 5. $ docker pull sikakolli/data_explorer
 6. This is command to pull our image from DockerHub. For this you will need to login to Dockerhub using your own credentials.
 <h3> Contribution </h3>
+7. Create .env file
 
+* AWS_ACCESS_KEY = 
+* AWS_SECRET_KEY = 
+* LOGS_ACCESS_KEY = 
+* LOGS_SECRET_KEY =  
+8. Run the FastApi : Also use port 8000 in config.json file
+```bash
+uvicorn API:app --reload-- port 8000
+```
+9. Run the app using the command 
+```bash
+streamlit run Login.py
+```
 1. Aakash :  23.33%  
 2. Bhakti :  23.33%
 3. Bhargavi: 30%
