@@ -64,7 +64,7 @@ Following are the stacks used to build this project
 8. Airflow to build workflows connecting virtually any technology
 
 
-Architecture Diagram :
+**Architecture** **Diagram** :
    
  ![image](https://github.com/BigDataIA-Spring2023-Team-11/Assignment2/blob/main/arch-diag/architecture_diagram.png)
 
